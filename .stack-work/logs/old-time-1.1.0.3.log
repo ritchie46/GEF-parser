@@ -1,7 +1,0 @@
-[1 of 2] Compiling Main             ( C:\Users\vik\AppData\Local\Temp\stack8748\old-time-1.1.0.3\Setup.hs, C:\Users\vik\AppData\Local\Temp\stack8748\old-time-1.1.0.3\.stack-work\dist\ca59d0ab\setup\Main.o )
-[2 of 2] Compiling StackSetupShim   ( C:\sr\setup-exe-src\setup-shim-Z6RU0evB.hs, C:\Users\vik\AppData\Local\Temp\stack8748\old-time-1.1.0.3\.stack-work\dist\ca59d0ab\setup\StackSetupShim.o )
-Linking C:\Users\vik\AppData\Local\Temp\stack8748\old-time-1.1.0.3\.stack-work\dist\ca59d0ab\setup\setup.exe ...
-Configuring old-time-1.1.0.3...
-setup.exe: The package has a './configure' script. If you are on Windows, This
-requires a Unix compatibility toolchain such as MinGW+MSYS or Cygwin. If you
-are not on Windows, ensure that an 'sh' command is discoverable in your path.
