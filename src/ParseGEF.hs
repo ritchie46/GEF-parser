@@ -10,7 +10,10 @@ import Data.List (isInfixOf, intercalate)
 
 type GefColumns = [(Integer, String, String)]
 type GefValues = [[Float]]
-type Gef = (GefColumns, GefValues)
+type Gefx = Float
+type Gefy = Float
+type Gefz = Float
+type Gef = ((Gefx, Gefy, Gefz) ,GefColumns, GefValues)
 
 -- Helper functions for parsing patterns
 
@@ -106,6 +109,22 @@ zID = do
     z <- munch americanFloat
     return (read z :: Float)
 
+-- Takes the lines from the .gef file as input and return the x, y coordinates
+detXY :: [String] -> (Float, Float)
+detXY (x:xs)
+    | null result = detXY xs
+    | otherwise = fst $ last result
+    where
+        result = readP_to_S xyID x
+
+-- Takes the lines from the .gef file as input and return the z coordinates
+detZ :: [String] -> Float
+detZ (x:xs)
+    | null result = detZ xs
+    | otherwise = fst $ last result
+    where
+        result = readP_to_S zID x
+
 -- Take the lines of a .GEF file and return the line index where the #EOH is located
 endOfHeader :: [String] -> Int
 endOfHeader = flip _endOfHeader 0
@@ -150,14 +169,16 @@ readGef :: String -> Gef
 readGef s = let ln = lines s
             in let ci = detColumnInfo ln
                    eoh = endOfHeader ln
+                   (x, y) = detXY ln
+                   z = detZ ln
                    -- _removeNothing because of the possible parsing errors.
                    in let valLines = map (_removeNothing . detCsvValLine) $ drop (eoh + 1) ln
-                          in (ci, valLines)
+                          in ((x, y, z), ci, valLines)
 
 gefToCSVS :: Gef -> String
-gefToCSVS (ci, valLines) = let header = intercalate "," (map (map repl . show) ci)
-                               values = map (intercalate "," . map show) valLines
-                               in unlines $ header : values
-                               where
-                                 repl ',' = ':'
-                                 repl c = c
+gefToCSVS ((x, y, z), ci, valLines) = let header = intercalate "," (map (map repl . show) ci)
+                                          values = map (intercalate "," . map show) valLines
+                                       in unlines $ ("x," ++ show x) : ("y," ++ show y) : ("z," ++ show z) : header : values
+                                       where
+                                         repl ',' = ':'
+                                         repl c = c

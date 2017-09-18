@@ -15,8 +15,9 @@ main = do
 
     if length args == 0
         then do putStrLn "gef-parser - Convert .GEF to .CSV files.\n\n"
-                putStrLn "Usage: gef-parser.exe [filepath.gef] [filepath.csv]\n \
-                          \                     [directory (all .gef files in that directory are converted)]"
+                putStrLn "Usage: gef-parser.exe [filepath.gef] [filepath.csv]\n\
+                         \                      [directory] (all .gef files in that directory\n\
+                         \                                   are converted)"
         else do
             let fstArg = args !! 0
             isdir <- doesDirectoryExist fstArg
