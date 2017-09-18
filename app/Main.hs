@@ -5,6 +5,7 @@ import ParseGEF
 import Data.List (isInfixOf)
 import Data.Char (toLower)
 import Control.Monad (filterM)
+import Data.Text (replace, pack, unpack)
 
 
 -- "C:/Users/vik/Desktop/empty/test/"
@@ -13,14 +14,16 @@ main = do
     args <- getArgs
 
     if length args == 0
-        then do putStrLn "gef-parser - Convert .GEF to .CSV.\n\n"
+        then do putStrLn "gef-parser - Convert .GEF to .CSV files.\n\n"
                 putStrLn "Usage: gef-parser.exe [filename.gef] [filename.csv]\n \
                           \                     [directory (all .gef files in that directory are converted)]"
         else do
             let fstArg = args !! 0
             isdir <- doesDirectoryExist fstArg
             if isdir
-                then convertDir fstArg
+                then do
+                    putStrLn $ "Converting the .gef files in :" ++ fstArg
+                    convertDir fstArg
                 else do
                     print ""
 
@@ -30,17 +33,17 @@ convertDir :: String -> IO ()
 convertDir path = do
 
     listdir_ <- getDirectoryContents path
-    let listdir = filter (isInfixOf ".gef" . map toLower) listdir_
-    -- let listdir = filter (isInfixOf ".gef") listdir_
+    -- filter gef files                     $ [Filenames] to Lowercase
+    let listdir = filter (isInfixOf ".gef") $ map (map toLower) listdir_
+
+    -- replace .gef with .csv and append to path.
+    let outNames = map ((path ++) . unpack . replace (pack ".gef") (pack ".csv") . pack) listdir
+
+    -- read the contents of all gef files.
     contents <- mapM (readFile . (path ++)) $ take (length listdir - 2) listdir
     let gef = map readGef contents
 
     let csvContents = map gefToCSVS gef
-    let names = writeGefPaths path 0 csvContents
 
-    a <- sequence $ zipWith writeFile names csvContents
-    print names
-
-writeGefPaths :: String -> Int -> [String] -> [String]
-writeGefPaths _ _ [] = [""]
-writeGefPaths p c (x:xs) = (p ++ show c ++ ".csv") : writeGefPaths p (c + 1) xs
+    a <- sequence $ zipWith writeFile outNames csvContents
+    print outNames
