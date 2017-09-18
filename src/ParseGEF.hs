@@ -83,6 +83,7 @@ endOfHeader :: [String] -> Int
 endOfHeader = flip _endOfHeader 0
 
 _endOfHeader :: [String] -> Int -> Int
+_endOfHeader [] _ = 0
 _endOfHeader (x:xs) n
   | "EOH" `isInfixOf` x = n
   | otherwise = _endOfHeader xs n + 1
@@ -132,6 +133,3 @@ gefToCSVS (ci, valLines) = let header = intercalate "," (map (map repl . show) c
                                where
                                  repl ',' = ':'
                                  repl c = c
-
-
--- gefToCSVS (ci, valLines) = unlines $ concatMap show ci : map (intercalate "," . map show) valLines
