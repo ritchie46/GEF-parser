@@ -48,6 +48,10 @@ isNummeric char =
 isNotNummeric :: Char -> Bool
 isNotNummeric = not . isNummeric
 
+-- Differs from isNummeric because the ',' is excluded
+americanFloat :: Char -> Bool
+americanFloat char = char `elem` ['0'..'9'] || char `elem` ".e-+"
+
 columnInfo :: ReadP (Integer, String, String)
 -- test with:  readP_to_S  columnInfo "#COLUMNINFO= 1, m, sondeerlengte, 1"
 columnInfo = do
@@ -77,6 +81,30 @@ detColumnInfo (x:xs)
             | otherwise    = fst  (last result): detColumnInfo xs
             where
               result = readP_to_S columnInfo x
+
+_eatIntermediateID :: ReadP ()
+_eatIntermediateID = do
+    skipMany $ satisfy (`elem` "= ")
+    skipMany $ satisfy americanFloat
+    skipMany (satisfy (`elem` ", "))
+
+xyID :: ReadP (Float, Float)
+xyID = do
+    skipMany nonAlphabetic
+    string "XYID"
+    _eatIntermediateID
+    x <- munch americanFloat
+    skipMany (satisfy (`elem` ", "))
+    y <- munch americanFloat
+    return (read x :: Float, read y :: Float)
+
+zID :: ReadP Float
+zID = do
+    skipMany nonAlphabetic
+    string "ZID"
+    _eatIntermediateID
+    z <- munch americanFloat
+    return (read z :: Float)
 
 -- Take the lines of a .GEF file and return the line index where the #EOH is located
 endOfHeader :: [String] -> Int
