@@ -3,10 +3,10 @@ version:             0.1.0.0
 -- synopsis:
 -- description:
 homepage:            https://github.com/githubuser/gef-parser#readme
-license:             BSD3
+license:             MIT
 license-file:        LICENSE
 author:              Ritchie Vink
-maintainer:          example@example.com
+maintainer:          ritchie46@gmail.com
 copyright:           2017 Author name here
 category:            Web
 build-type:          Simple
